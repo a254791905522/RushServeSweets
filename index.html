@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rush Serve Sweets — Fast Dessert Service Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cream: #fff8f0;
+            --frosting: #ffe8ef;
+            --berry: #e84d7a;
+            --berry-deep: #c73d62;
+            --mint: #5ec9a8;
+            --cocoa: #3d2c29;
+            --cocoa-soft: rgba(61, 44, 41, 0.78);
+            --card: rgba(255, 255, 255, 0.88);
+            --shadow: rgba(200, 90, 120, 0.18);
+        }
+
+        @keyframes floatDot {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.35; }
+            50% { transform: translateY(-8px) rotate(8deg); opacity: 0.6; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: var(--cocoa);
+            min-height: 100vh;
+            background:
+                radial-gradient(ellipse 90% 60% at 50% -15%, rgba(255, 200, 220, 0.55), transparent),
+                radial-gradient(circle 45% at 100% 20%, rgba(94, 201, 168, 0.12), transparent),
+                radial-gradient(circle 40% at 0% 85%, rgba(232, 77, 122, 0.08), transparent),
+                linear-gradient(165deg, #fff0e8 0%, var(--cream) 40%, #ffe4ec 100%);
+            padding: 28px 16px 52px;
+            overflow-x: hidden;
+        }
+
+        .sprinkles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                radial-gradient(circle 3px at 12% 18%, rgba(232, 77, 122, 0.35) 50%, transparent 50%),
+                radial-gradient(circle 2px at 88% 12%, rgba(94, 201, 168, 0.4) 50%, transparent 50%),
+                radial-gradient(circle 2.5px at 72% 78%, rgba(255, 200, 120, 0.45) 50%, transparent 50%),
+                radial-gradient(circle 2px at 22% 72%, rgba(180, 140, 255, 0.3) 50%, transparent 50%);
+            opacity: 0.85;
+        }
+
+        .shell {
+            position: relative;
+            width: min(860px, 100%);
+            margin: 0 auto;
+            z-index: 1;
+        }
+
+        .hero {
+            border-radius: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.95);
+            background: var(--card);
+            box-shadow:
+                0 4px 0 rgba(232, 77, 122, 0.12),
+                0 20px 50px var(--shadow);
+            padding: 36px 28px 34px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 55%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(255, 182, 200, 0.35), transparent 70%);
+            pointer-events: none;
+        }
+
+        .brand-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            font-family: 'Baloo 2', cursive;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #fff;
+            background: linear-gradient(135deg, var(--berry), var(--berry-deep));
+            border-radius: 999px;
+            padding: 8px 18px;
+            box-shadow: 0 3px 0 rgba(199, 61, 98, 0.35);
+        }
+
+        .version-hint {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--cocoa-soft);
+        }
+
+        h1 {
+            font-family: 'Baloo 2', cursive;
+            font-weight: 800;
+            font-size: clamp(2rem, 6.5vw, 3.2rem);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .title-gradient {
+            background: linear-gradient(110deg, var(--berry-deep) 0%, var(--berry) 35%, #ff9eb5 70%, var(--mint) 100%);
+            background-size: 200% auto;
+            animation: shimmer 8s ease infinite alternate;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            margin-top: 16px;
+            font-size: clamp(1.05rem, 2.2vw, 1.22rem);
+            font-weight: 600;
+            color: var(--cocoa-soft);
+            max-width: 700px;
+            line-height: 1.75;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-row {
+            margin-top: 26px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn {
+            text-decoration: none;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.02em;
+            border-radius: 14px;
+            padding: 14px 24px;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn.primary {
+            color: #fff;
+            background: linear-gradient(180deg, var(--mint) 0%, #3daa8a 100%);
+            box-shadow: 0 4px 0 #2d8f73, 0 12px 28px rgba(94, 201, 168, 0.35);
+        }
+
+        .btn.secondary {
+            color: var(--berry-deep);
+            background: var(--frosting);
+            box-shadow: 0 3px 0 rgba(232, 77, 122, 0.2);
+            border: 2px solid rgba(232, 77, 122, 0.25);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .features {
+            margin-top: 30px;
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            position: relative;
+            z-index: 1;
+        }
+
+        .feat {
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            background: linear-gradient(160deg, #fff 0%, var(--frosting) 100%);
+            padding: 22px 20px;
+            position: relative;
+            box-shadow: 0 6px 20px rgba(232, 77, 122, 0.08);
+        }
+
+        .feat-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: floatDot 4s ease-in-out infinite;
+        }
+
+        .feat:nth-child(2) .feat-icon { animation-delay: -1.3s; }
+        .feat:nth-child(3) .feat-icon { animation-delay: -2.6s; }
+
+        .feat h2 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.15rem;
+            color: var(--berry-deep);
+            margin-bottom: 10px;
+        }
+
+        .feat p {
+            color: var(--cocoa-soft);
+            line-height: 1.65;
+            font-size: 0.98rem;
+            font-weight: 500;
+        }
+
+        .strip {
+            margin-top: 28px;
+            padding: 20px 22px;
+            border-radius: 18px;
+            border: 2px dashed rgba(94, 201, 168, 0.45);
+            background: rgba(94, 201, 168, 0.08);
+            position: relative;
+            z-index: 1;
+        }
+
+        .strip p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--cocoa-soft);
+            line-height: 1.65;
+            text-align: center;
+        }
+
+        .strip strong {
+            color: var(--berry-deep);
+            font-weight: 800;
+        }
+
+        .foot {
+            margin-top: 24px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .foot a {
+            font-family: 'Baloo 2', cursive;
+            font-size: 0.95rem;
+            color: var(--berry);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .foot a:hover {
+            color: var(--berry-deep);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sprinkles" aria-hidden="true"></div>
+
+    <main class="shell">
+        <section class="hero">
+            <div class="brand-row">
+                <span class="badge">App Store</span>
+                <span class="version-hint">iPhone · iPad</span>
+            </div>
+            <h1><span class="title-gradient">Rush Serve Sweets</span></h1>
+            <p class="tagline">
+                Step into a colorful dessert counter where every second counts. Rush Serve Sweets is a lively serving game about plating treats, keeping orders straight, and staying ahead of the rush—perfect for quick sessions when you want sugary fun without the cleanup.
+            </p>
+
+            <div class="cta-row">
+                <a class="btn primary" href="https://apps.apple.com/us/app/rush-serve-sweets/id6766213038?uo=4" target="_blank" rel="noopener noreferrer">Download on the App Store</a>
+                <a class="btn secondary" href="privacy.html">Privacy</a>
+            </div>
+
+            <div class="features">
+                <article class="feat">
+                    <span class="feat-icon" aria-hidden="true">🧁</span>
+                    <h2>Sweet rush gameplay</h2>
+                    <p>Tap and serve cakes, cones, and candy-themed orders as the line grows. Clear waves of hungry guests and chase a better run each time you play.</p>
+                </article>
+                <article class="feat">
+                    <span class="feat-icon" aria-hidden="true">⏱️</span>
+                    <h2>Pick-up-and-play pace</h2>
+                    <p>Short rounds and clear goals make it easy to start between classes, commutes, or coffee breaks—one more order is always one tap away.</p>
+                </article>
+                <article class="feat">
+                    <span class="feat-icon" aria-hidden="true">🍓</span>
+                    <h2>Bright dessert vibe</h2>
+                    <p>Cheerful colors, playful treats, and a cozy shop atmosphere keep the mood light whether you are unwinding or competing with your own high score.</p>
+                </article>
+            </div>
+
+            <div class="strip">
+                <p><strong>Why download:</strong> if you enjoy time-management flair with a dessert twist, Rush Serve Sweets turns a busy counter into a bite-sized challenge you can savor on your own schedule.</p>
+            </div>
+
+            <p class="foot"><a href="privacy.html">Privacy policy</a></p>
+        </section>
+    </main>
+</body>
+
+</html>
